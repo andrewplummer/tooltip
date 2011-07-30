@@ -108,6 +108,16 @@
     } else {
       s.arrow.left = Math.floor((s.width / 2) - (arrowWidth / 2));
     }
+    s.arrow[getInverseDirection(dir)] = -arrowHeight;
+  }
+
+  function getInverseDirection(dir){
+    switch(dir){
+      case 'top':    return 'bottom';
+      case 'bottom': return 'top';
+      case 'left':   return 'right';
+      case 'right':  return 'left';
+    }
   }
 
   function getCenter(s, horizontal){
@@ -123,7 +133,7 @@
     var duration = getDefault('duration', options, el, 250);
     tooltip.attr('class', color + ' ' + s.direction);
     tooltip.stop(true, true).css(s.css);
-    arrow.removeAttr('style').css(s.arrow);
+    arrow.attr('style', '').css(s.arrow);
     tooltip.animate(s.on, {
       duration: duration,
       queue: false,
