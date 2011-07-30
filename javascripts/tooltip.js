@@ -8,15 +8,6 @@
   var win;
   var timer;
 
-  function setDefaults(options, el){
-    options = options || {};
-    options.margin = options.margin || 20;
-    options.animateOffset = options.animateOffset || 10;
-    options.direction = options.direction || el.attr('data-tooltip-direction') || tooltip.attr('data-tooltip-direction') || 'top';
-    options.duration = options.duration || 250;
-    return options;
-  }
-
   function getState(el, options){
     var s = {};
     var elementHeight = el.outerHeight();
@@ -38,9 +29,9 @@
     return s;
   }
 
-
   function checkBounds(s, direction, margin){
     var bound, alternate;
+    margin = parseInt(margin);
     switch(direction){
       case 'top':
         bound = win.scrollTop();
