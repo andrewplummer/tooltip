@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" ><title></title>
+    <title>A minimal jQuery tooltip plugin</title>
   </head>
   <style type="text/css">
 
@@ -11,8 +12,22 @@
       color: #fff;
     }
 
+    h1 {
+      width: 415px;
+      border-bottom: 1px solid #d2d2d2;
+      line-height: 26px;
+      margin: 0 auto;
+      text-align: center;
+      font-size: 28px;
+      margin: 0px 0px 15px 0px;
+    }
+
     h4 {
-      margin: 10px 0px 10px 0px;
+      margin: 0px;
+    }
+
+    p {
+      margin: 5px 0px;
     }
 
     #tl {
@@ -61,11 +76,11 @@
 
     #main {
       position: absolute;
-      width: 600px;
-      height: 300px;
+      width: 650px;
+      height: 400px;
       top: 50%;
       left: 50%;
-      margin: -170px 0px 0px -320px;
+      margin: -220px 0px 0px -345px;
       background: #efefef;
       padding: 20px;
       border-radius: 6px;
@@ -76,9 +91,17 @@
       cursor: pointer;
     }
 
+    #controls {
+      overflow: hidden;
+    }
+
     .control {
       float: left;
-      width: 136px;
+      width: 150px;
+    }
+
+    .control h4 {
+      margin-bottom: 15px;
     }
 
     .content.control {
@@ -92,7 +115,7 @@
     }
 
     a {
-       color: #6bf;
+       color: #16c;
     }
 
     #target {
@@ -103,37 +126,69 @@
       background: rgba(0,0,0,0.3);
       padding: 5px 10px;
       border-radius: 3px;
+      cursor: pointer;
     }
 
-    #source {
-      position: absolute;
-      bottom: 20px;
-      width: 600px;
+    #source h4 {
+      margin-bottom: 5px;
+    }
+
+    #source p {
+      margin: 0px 0px 5px 0px;
+      border-left: 10px solid #692;
+      padding-left: 10px;
+      margin-bottom: 10px;
     }
 
     #source pre {
       white-space: normal;
       font-size: 15px;
       color: #333;
-      background-color: #fff;
-      padding: 10px;
-      border-radius: 4px;
+      padding: 2px 10px;
+      margin: 0px;
+      border-left: 10px solid #692;
+      margin-bottom: 10px;
+    }
+
+    .parameter {
+      color: #060;
+      font-weight: bold;
+    }
+
+    .attribute {
+    }
+
+    #get {
+      display: block;
+      text-align: right;
+      text-decoration: none;
+      font-size: 18px;
+      font-family: Tahoma;
+      margin-top: 15px;
+    }
+
+    #get .arrow {
+    font-size: 20px;
+    font-family: "Trebuchet MS";
+    font-weight: bold;
+    vertical-align: -1px;
     }
 
 
   </style>
   <link rel="stylesheet" href="stylesheets/tooltip.css" type="text/css" />
 <body>
-  <div id="tl" data-tooltip-margin="100" data-test-title="Hi... I'm the top left title attribute!">Top Left</div>
+  <div id="tl" data-test-title="Hi... I'm the top left title attribute!">Top Left</div>
   <div id="tr" data-test-title="Hi... I'm the top right title attribute!">Top Right</div>
   <div id="bl" data-test-title="Hi... I'm the bottom left title attribute!">Bottom Left</div>
-  <div id="br" data-test-title="Hi... I'm the bottom right title attribute!">Bottom Right</div>
+  <div id="br" data-test-title="Hi... I'm the bottom right title attribute!Hi... I'm the bottom right title attribute!Hi... I'm the bottom right title attribute!Hi... I'm the bottom right title attribute!Hi... I'm the bottom right title attribute!Hi... I'm the bottom right title attribute!Hi... I'm the bottom right title attribute!Hi... I'm the bottom right title attribute!Hi... I'm the bottom right title attribute!Hi... I'm the bottom right title attribute!Hi... I'm the bottom right title attribute!Hi... I'm the bottom right title attribute!Hi... I'm the bottom right title attribute!Hi... I'm the bottom right title attribute!Hi... I'm the bottom right title attribute!">Bottom Right</div>
   <div id="main">
+    <h1>A minimal jQuery tooltip plugin</h1>
     <div id="tc" data-test-title="Hi... I'm the top center title attribute!">Top Center</div>
     <div id="bc" data-test-title="Hi... I'm the bottom center title attribute!">Bottom Center</div>
     <div id="controls">
       <div class="control">
-        <h4>Direction:</h4>
+        <h4 data-tooltip-direction="left" title="Default is &quot;top&quot;.">Direction:</h4>
         <p>
           <label for="direction_top" >Top</label>
           <input type="radio" id="direction_top" value="top" name="direction" checked="checked" />
@@ -152,18 +207,18 @@
         </p>
       </div>
       <div class="control">
-        <h4>Color:</h4>
-        <p>
-          <label for="color_black" >Black</label>
-          <input type="radio" id="color_black" name="color" value="black" />
-        </p>
+        <h4 data-tooltip-direction="left" title="Default is &quot;white&quot;.">Color:</h4>
         <p>
           <label for="color_white" >White</label>
           <input type="radio" id="color_white" name="color" value="white" />
         </p>
+        <p>
+          <label for="color_black" >Black</label>
+          <input type="radio" id="color_black" name="color" value="black" />
+        </p>
       </div>
       <div class="control">
-        <h4>Margin:</h4>
+        <h4 data-tooltip-direction="left" title="Default is &quot;10&quot;.">Margin:</h4>
         <p>
           <input type="text" id="margin" name="margin" />
           <label for="margin" >px</label>
@@ -183,29 +238,34 @@
       </div>
     </div>
     <div id="source">
-      <h4>Source Code:</h4>
-      <pre><code></pre></code>
-    </div>
+      <h4>HTML:</h4>
+      <pre><code id="output"></code></pre>
+      <h4>Javascript:</h4>
+      <p>None!</p>
+      <h4>Installation:</h4>
+      <p>Just unzip into your web directory and link to the tooltip.js file.</p>
+      <a id="get" href="http://github.com/andrewplummer/tooltip/zipball/master">get the code <span class="arrow">></span></a>
   </div>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
   <script type="text/javascript" src="javascripts/tooltip.js"></script>
   <script>
 
     var tipped = $('[data-test-title]');
-    var output = $('code');
+    var output = $('#output');
     var source = '<div title="" data-tooltip-direction="" data-tooltip-color="" data-tooltip-margin=""></div>';
     var direction = 'top';
-    var color = 'black';
-    var title = 'TITLE_TEXT';
+    var color = 'white';
+    var title = 'some text';
     var margin = 10;
 
     var setSource = function() {
       var code = source;
-      code = code.replace(/title=".*?"/, 'title="'+ title +'"');
-      code = code.replace(/data-tooltip-direction=".*?"/, 'data-tooltip-direction="'+ direction +'"');
-      code = code.replace(/data-tooltip-color=".*?"/, 'data-tooltip-color="'+ color +'"');
-      code = code.replace(/data-tooltip-margin=".*?"/, 'data-tooltip-margin="'+ margin +'"');
-      output.text(code);
+      code = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      code = code.replace(/title=".*?"/, '<span class="parameter">title</span>="<span class="attribute">'+ title +'</span>"');
+      code = code.replace(/data-tooltip-direction=".*?"/, '<span class="parameter">data-tooltip-direction</span>="<span class="attribute">'+ direction +'</span>"');
+      code = code.replace(/data-tooltip-color=".*?"/, '<span class="parameter">data-tooltip-color</span>="<span class="attribute">'+ color +'</span>"');
+      code = code.replace(/data-tooltip-margin=".*?"/, '<span class="parameter">data-tooltip-margin</span>="<span class="attribute">'+ margin +'</span>"');
+      output.html(code);
     }
 
     tipped.each(function(){
@@ -234,7 +294,7 @@
           var el = $(this);
           el.attr('title', selector ? '#target' : el.data('test-title'));
         });
-        title = selector ? '#target' : 'TITLE_TEXT';
+        title = selector ? '#target' : 'some text';
         setSource();
       });
       setSource();
