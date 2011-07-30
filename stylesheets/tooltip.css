@@ -24,22 +24,6 @@
   background-repeat: no-repeat;
 }
 
-#tooltip.top .arrow {
-  bottom: -11px;
-}
-
-#tooltip.right .arrow {
-  left: -11px;
-}
-
-#tooltip.bottom .arrow {
-  top: -11px;
-}
-
-#tooltip.left .arrow {
-  right: -11px;
-}
-
 #tooltip.black.top .arrow {
   background-position: -6px -17px;
 }
