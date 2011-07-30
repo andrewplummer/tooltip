@@ -6,16 +6,6 @@
   var arrowHeight;
   var content;
   var win;
-  var timer;
-
-  function setDefaults(options, el){
-    options = options || {};
-    options.margin = options.margin || 20;
-    options.animateOffset = options.animateOffset || 10;
-    options.direction = options.direction || el.attr('data-tooltip-direction') || tooltip.attr('data-tooltip-direction') || 'top';
-    options.duration = options.duration || 250;
-    return options;
-  }
 
   function getState(el, options){
     var s = {};
@@ -38,9 +28,9 @@
     return s;
   }
 
-
   function checkBounds(s, direction, margin){
     var bound, alternate;
+    margin = parseInt(margin);
     switch(direction){
       case 'top':
         bound = win.scrollTop();
@@ -129,31 +119,37 @@
   }
 
   function animateTooltip(s, options, el, fn){
-    var color = getDefault('color', options, el, 'black');
+    var color = getDefault('color', options, el, 'white');
+    var duration = getDefault('duration', options, el, 250);
     tooltip.attr('class', color + ' ' + s.direction);
     tooltip.stop(true, true).css(s.css);
     arrow.removeAttr('style').css(s.arrow);
     tooltip.animate(s.on, {
-      duration: options.duration,
+      duration: duration,
       queue: false,
       complete: fn
     });
-    tooltip.fadeIn(options.duration);
+    tooltip.fadeIn(duration);
   }
 
-  function animateTooltipOut(s, options, fn){
+  function animateTooltipOut(s, options, el, fn){
+    var duration = getDefault('duration', options, el, 250);
     tooltip.animate(s.off, {
-      duration: options.duration,
+      duration: duration,
       queue: false,
       complete: fn
     });
-    tooltip.fadeOut(options.duration);
+    tooltip.fadeOut(duration);
   }
 
   function setContent(el, title) {
     var html;
-    var ref = $(title);
-    if(ref.length > 0) {
+    try {
+      var ref = $(title);
+    } catch(e){
+      // May throw a malfolmed selector error
+    }
+    if(ref && ref.length > 0) {
       html = ref.html();
     } else {
       html = title;
@@ -170,16 +166,9 @@
     this.each(function(){
       var el = $(this);
       var title = el.attr('title');
-      var animatingIn = false;
-      var animatingOut = false;
+      var animating = false;
       var state;
       el.unbind('mouseenter').mouseenter(function(){
-        if(animatingOut) {
-          animatingOut = false;
-          el.mouseenter();
-        } else if(animatingIn) {
-          return;
-        }
         var margin    = getDefault('margin', options, el, 20);
         var direction = getDefault('direction', options, el, 'top');
         var t = el.attr('title');
@@ -190,24 +179,17 @@
         setContent(el, title);
         state = getState(el, options);
         checkBounds(state, direction, margin);
-        clearTimeout(timer);
         animateTooltip(state, options, el, function(){
-          animatingIn = false;
+          animating = false;
         });
-        animatingIn = true;
+        animating = true;
       });
       el.unbind('mouseleave').mouseleave(function(){
-        if(animatingIn) {
-          clearTimeout(timer);
-          timer = setTimeout(function(){
-            el.mouseleave();
-          }, 2000);
+        if(animating){
+          tooltip.fadeOut(100);
           return;
         }
-        animateTooltipOut(state, options, function(){
-          animatingOut = false;
-        });
-        animatingOut = true;
+        animateTooltipOut(state, options, el);
       });
     });
   };

@@ -3,6 +3,7 @@
   padding: 10px;
   border-radius: 4px;
   box-shadow: 0px 0px 3px rgba(0,0,0,0.4);
+  max-width: 600px;
 }
 
 #tooltip.black {
@@ -28,11 +29,11 @@
 }
 
 #tooltip.right .arrow {
-  left: -10px;
+  left: -11px;
 }
 
 #tooltip.bottom .arrow {
-  top: -10px;
+  top: -11px;
 }
 
 #tooltip.left .arrow {
@@ -44,11 +45,11 @@
 }
 
 #tooltip.black.right .arrow {
-  background-position: 4px -6px;
+  background-position: 5px -6px;
 }
 
 #tooltip.black.bottom .arrow {
-  background-position: -6px 4px;
+  background-position: -6px 5px;
 }
 
 #tooltip.black.left .arrow {
@@ -60,11 +61,11 @@
 }
 
 #tooltip.white.right .arrow {
-  background-position: -29px -6px;
+  background-position: -28px -6px;
 }
 
 #tooltip.white.bottom .arrow {
-  background-position: -39px 4px;
+  background-position: -39px 5px;
 }
 
 #tooltip.white.left .arrow {
