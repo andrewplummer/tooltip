@@ -65,13 +65,13 @@
         s.css.top = getCenter(s, false);
         break;
     }
-    getArrowOffset(s, direction);
-    checkSlide(s, direction);
     if(alternate && !s.over){
       s.over = true;
       checkBounds(s, alternate, margin);
     } else {
       s.direction = direction;
+      getArrowOffset(s, direction);
+      checkSlide(s, direction);
     }
   }
 
