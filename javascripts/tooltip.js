@@ -178,6 +178,9 @@
       var title = el.attr('title');
       var animating = false;
       var state;
+      
+      if ( !title ) { return }
+      
       el.unbind('mouseenter').mouseenter(function(){
         var margin    = getDefault('margin', options, el, 20);
         var direction = getDefault('direction', options, el, 'top');
