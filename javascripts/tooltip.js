@@ -168,7 +168,15 @@
   }
 
   function getDefault(name, options, el, defaultValue) {
-    return options[name] || el.data('tooltip-'+name) || defaultValue;
+    return or(options[name], el.data('tooltip-'+name), defaultValue);
+  }
+
+  function or() {
+    for(var i = 0; i < arguments.length; i++) {
+      if(arguments[i] !== undefined) {
+        return arguments[i];
+      }
+    }
   }
 
   jQuery.fn.tooltip = function(options){
@@ -178,28 +186,41 @@
       var title = el.attr('title');
       var animating = false;
       var state;
+      var timer;
       el.unbind('mouseenter').mouseenter(function(){
-        var margin    = getDefault('margin', options, el, 20);
-        var direction = getDefault('direction', options, el, 'top');
-        var t = el.attr('title');
-        if(t) {
-          title = t;
-        }
-        el.removeAttr('title');
-        setContent(el, title);
-        state = getState(el, options);
-        checkBounds(state, direction, margin);
-        animateTooltip(state, options, el, function(){
-          animating = false;
-        });
-        animating = true;
+        var delay = getDefault('delay', options, el, 500);
+        clearTimeout(timer);
+        timer = setTimeout(function() {
+          var margin    = getDefault('margin', options, el, 20);
+          var direction = getDefault('direction', options, el, 'top');
+          var t = el.attr('title');
+          if(t) {
+            title = t;
+          }
+          el.removeAttr('title');
+          setContent(el, title);
+          state = getState(el, options);
+          checkBounds(state, direction, margin);
+          animateTooltip(state, options, el, function(){
+            animating = false;
+          });
+          animating = true;
+        }, delay);
       });
       el.unbind('mouseleave').mouseleave(function(){
+        clearTimeout(timer);
+        if(!state) return;
         if(animating){
-          tooltip.fadeOut(100);
-          return;
+          tooltip.fadeOut(100, function() {
+            animating = false;
+          });
+        } else {
+          animateTooltipOut(state, options, el, function() {
+            animating = false;
+          });
         }
-        animateTooltipOut(state, options, el);
+        state = null;
+        animating = true;
       });
     });
   };
