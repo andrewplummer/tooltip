@@ -1,25 +1,33 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" ><title></title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
     <title>A minimal jQuery tooltip plugin</title>
   </head>
   <style type="text/css">
 
+    html {
+      height: 100%;
+    }
+
     body {
+      color: #fff;
+      height: 100%;
       font-family: "Trebuchet MS", sans-serif;
       background-color: #269;
-      color: #fff;
+      background-image: -moz-radial-gradient(50% 50%, circle, #226699 0%, #024679 100%);
+      background-image: -webkit-radial-gradient(50% 50%, circle cover, #226699 0%, #024679 100%);
     }
 
     h1 {
-      width: 415px;
+      width: 650px;
       border-bottom: 1px solid #d2d2d2;
       line-height: 26px;
       margin: 0 auto;
       text-align: center;
       font-size: 28px;
       margin: 0px 0px 15px 0px;
+      text-shadow: 0px 1px 0px #fff;
     }
 
     h4 {
@@ -127,6 +135,7 @@
 
     #target {
       color: #888;
+      font-size: 14px;
     }
 
     [data-test-title] {
@@ -171,7 +180,7 @@
       text-decoration: none;
       font-size: 17px;
       font-family: Tahoma;
-      margin-top: 35px;
+      margin-top: 30px;
     }
 
     #get a {

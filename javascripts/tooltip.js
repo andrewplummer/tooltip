@@ -65,13 +65,13 @@
         s.css.top = getCenter(s, false);
         break;
     }
-    getArrowOffset(s, direction);
-    checkSlide(s, direction);
     if(alternate && !s.over){
       s.over = true;
       checkBounds(s, alternate, margin);
     } else {
       s.direction = direction;
+      getArrowOffset(s, direction);
+      checkSlide(s, direction);
     }
   }
 
@@ -184,6 +184,7 @@
     this.each(function(){
       var el = $(this);
       var title = el.attr('title');
+      if(!title) return;
       var animating = false;
       var state;
       var timer;
