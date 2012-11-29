@@ -192,7 +192,7 @@
   </style>
   <link rel="stylesheet" href="stylesheets/tooltip.css" type="text/css" />
 <body>
-  <div id="tl" data-test-title="Hi... I'm the top left title attribute!">Top Left</div>
+  <div id="tl" data-test-title="Hi... I'm the top left title attribute!" data-tooltip-slide="0">Top Left</div>
   <div id="tr" data-test-title="Hi... I'm the top right title attribute!">Top Right</div>
   <div id="bl" data-test-title="Hi... I'm the bottom left title attribute!">Bottom Left</div>
   <div id="br" data-test-title="Hi... I'm the bottom right title attribute!">Bottom Right</div>
@@ -204,19 +204,19 @@
       <div class="control">
         <h4 data-tooltip-direction="left">Direction:</h4>
         <p>
-          <label for="direction_top" >Top</label>
+          <label for="direction_top">Top</label>
           <input type="radio" id="direction_top" value="top" name="direction" checked="checked" />
         </p>
         <p>
-          <label for="direction_right" >Right</label>
+          <label for="direction_right">Right</label>
           <input type="radio" id="direction_right" name="direction" value="right" />
         </p>
         <p>
-          <label for="direction_bottom" >Bottom</label>
+          <label for="direction_bottom">Bottom</label>
           <input type="radio" id="direction_bottom" name="direction" value="bottom" />
         </p>
         <p>
-          <label for="direction_left" >Left</label>
+          <label for="direction_left">Left</label>
           <input type="radio" id="direction_left" name="direction" value="left" />
         </p>
       </div>
@@ -248,7 +248,7 @@
           <label for="content_selector" >Use selector</label>
           <input type="radio" id="content_selector" name="content" value="selector" />
         </p>
-        <p id="target">Hello I'm some content. I can have html such as <em>em</em> tags and <a href="#">links</a>.</p>
+        <p id="target">Hello I'm some content. I can have html such as <em>em</em> tags.</p>
       </div>
     </div>
     <div id="source">

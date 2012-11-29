@@ -28,46 +28,47 @@
     return s;
   }
 
-  function checkBounds(s, direction, margin){
+  function checkBounds(s, direction, margin, slide){
     var bound, alternate;
     margin = parseInt(margin);
+    slide  = parseInt(slide);
     switch(direction){
       case 'top':
         bound = win.scrollTop();
-        if(s.offset.top - s.height < bound) alternate = 'bottom';
+        if(s.offset.top - s.height - margin - slide < bound) alternate = 'bottom';
         s.on.top  = s.offset.top - s.height - margin;
-        s.off.top = s.on.top + 15;
-        s.css.top = s.on.top - 15;
+        s.off.top = s.on.top + slide;
+        s.css.top = s.on.top - slide;
         s.css.left = getCenter(s, true);
         break;
       case 'left':
         bound = win.scrollLeft();
-        if(s.offset.left - s.width < bound) alternate = 'right';
+        if(s.offset.left - s.width - margin - slide < bound) alternate = 'right';
         s.on.left  = s.offset.left - s.width - margin;
-        s.off.left = s.on.left + 15;
+        s.off.left = s.on.left + slide;
         s.css.top  = getCenter(s, false);
-        s.css.left = s.on.left - 15;
+        s.css.left = s.on.left - slide;
         break;
       case 'bottom':
         bound = win.scrollTop() + win.height();
-        if(s.offset.bottom + s.height > bound) alternate = 'top';
+        if(s.offset.bottom + s.height + margin + slide > bound) alternate = 'top';
         s.on.top   = s.offset.bottom + margin;
-        s.off.top  = s.offset.bottom - 15 + margin;
-        s.css.top  = s.on.top + 15;
+        s.off.top  = s.offset.bottom - slide + margin;
+        s.css.top  = s.on.top + slide;
         s.css.left = getCenter(s, true);
         break;
       case 'right':
         bound = win.scrollLeft() + win.width();
-        if(s.offset.right + s.width > bound) alternate = 'left';
+        if(s.offset.right + s.width + margin + slide > bound) alternate = 'left';
         s.on.left  = s.offset.right + margin;
-        s.off.left = s.on.left - 15;
-        s.css.left = s.on.left + 15;
+        s.off.left = s.on.left - slide;
+        s.css.left = s.on.left + slide;
         s.css.top = getCenter(s, false);
         break;
     }
     if(alternate && !s.over){
       s.over = true;
-      checkBounds(s, alternate, margin);
+      checkBounds(s, alternate, margin, slide);
     } else {
       s.direction = direction;
       getArrowOffset(s, direction);
@@ -130,7 +131,7 @@
 
   function animateTooltip(s, options, el, fn){
     var color = getDefault('color', options, el, 'white');
-    var duration = getDefault('duration', options, el, 250);
+    var duration = getDefault('duration', options, el, 150);
     tooltip.attr('class', color + ' ' + s.direction);
     tooltip.stop(true, true).css(s.css);
     arrow.attr('style', '').css(s.arrow);
@@ -143,7 +144,7 @@
   }
 
   function animateTooltipOut(s, options, el, fn){
-    var duration = getDefault('duration', options, el, 250);
+    var duration = getDefault('duration', options, el, 100);
     tooltip.animate(s.off, {
       duration: duration,
       queue: false,
@@ -152,17 +153,24 @@
     tooltip.fadeOut(duration);
   }
 
+  function unescapeHTML(html) {
+    if(/&/.test(html)) {
+      html = $('<p/>').html(html).text();
+    }
+    return html;
+  }
+
   function setContent(el, title) {
     var html;
     try {
-      var ref = $(title);
+      var ref = $(document.body).find(title);
     } catch(e){
       // May throw a malfolmed selector error
     }
     if(ref && ref.length > 0) {
       html = ref.html();
     } else {
-      html = title;
+      html = unescapeHTML(title);
     }
     content.html(html);
   }
@@ -189,19 +197,20 @@
       var state;
       var timer;
       el.unbind('mouseenter').mouseenter(function(){
-        var delay = getDefault('delay', options, el, 500);
+        var delay = getDefault('delay', options, el, 300);
         clearTimeout(timer);
         timer = setTimeout(function() {
           var margin    = getDefault('margin', options, el, 20);
+          var slide     = getDefault('slide', options, el, 10);
           var direction = getDefault('direction', options, el, 'top');
           var t = el.attr('title');
           if(t) {
             title = t;
           }
           el.removeAttr('title');
-          setContent(el, title);
+          setContent(el, options.html || title);
           state = getState(el, options);
-          checkBounds(state, direction, margin);
+          checkBounds(state, direction, margin, slide);
           animateTooltip(state, options, el, function(){
             animating = false;
           });
