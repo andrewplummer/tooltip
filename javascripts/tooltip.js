@@ -203,7 +203,7 @@
           var margin    = getDefault('margin', options, el, 20);
           var slide     = getDefault('slide', options, el, 10);
           var direction = getDefault('direction', options, el, 'top');
-          var t = el.attr('title');
+          var t         = el.attr('title');
           if(t) {
             title = t;
           }
