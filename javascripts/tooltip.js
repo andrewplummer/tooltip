@@ -7,111 +7,6 @@
   var content;
   var win;
 
-  function getState(el, options) {
-    var s = {};
-    var elementHeight = el.outerHeight();
-    var elementWidth  = el.outerWidth();
-    var offset = el.offset();
-    s.height = tooltip.outerHeight(true);
-    s.width  = tooltip.outerWidth(true);
-    s.offset = {};
-    s.offset.top = offset.top;
-    s.offset.left = offset.left;
-    s.offset.right = s.offset.left + elementWidth;
-    s.offset.bottom = s.offset.top + elementHeight;
-    s.offset.hCenter = s.offset.left + Math.floor(elementWidth / 2);
-    s.offset.vCenter = s.offset.top + Math.floor(elementHeight / 2);
-    s.css = {};
-    s.on  = {};
-    s.off = {};
-    s.arrow = {};
-    return s;
-  }
-
-  function checkBounds(s, direction, margin, slide) {
-    var bound, alternate;
-    margin = parseInt(margin);
-    slide  = parseInt(slide);
-    switch(direction) {
-      case 'top':
-        bound = win.scrollTop();
-        if(s.offset.top - s.height - margin - slide < bound) alternate = 'bottom';
-        s.on.top  = s.offset.top - s.height - margin;
-        s.off.top = s.on.top + slide;
-        s.css.top = s.on.top - slide;
-        s.css.left = getCenter(s, true);
-        break;
-      case 'left':
-        bound = win.scrollLeft();
-        if(s.offset.left - s.width - margin - slide < bound) alternate = 'right';
-        s.on.left  = s.offset.left - s.width - margin;
-        s.off.left = s.on.left + slide;
-        s.css.top  = getCenter(s, false);
-        s.css.left = s.on.left - slide;
-        break;
-      case 'bottom':
-        bound = win.scrollTop() + win.height();
-        if(s.offset.bottom + s.height + margin + slide > bound) alternate = 'top';
-        s.on.top   = s.offset.bottom + margin;
-        s.off.top  = s.offset.bottom - slide + margin;
-        s.css.top  = s.on.top + slide;
-        s.css.left = getCenter(s, true);
-        break;
-      case 'right':
-        bound = win.scrollLeft() + win.width();
-        if(s.offset.right + s.width + margin + slide > bound) alternate = 'left';
-        s.on.left  = s.offset.right + margin;
-        s.off.left = s.on.left - slide;
-        s.css.left = s.on.left + slide;
-        s.css.top = getCenter(s, false);
-        break;
-    }
-    if(alternate && !s.over) {
-      s.over = true;
-      checkBounds(s, alternate, margin, slide);
-    } else {
-      s.direction = direction;
-      getArrowOffset(s, direction);
-      checkSlide(s, direction);
-    }
-  }
-
-  function checkSlide(s, dir) {
-    var offset;
-    if(dir == 'top' || dir == 'bottom') {
-      offset = win.scrollLeft() - s.css.left + 5;
-      if(offset > 0) {
-        s.css.left += Math.abs(offset);
-        s.arrow.left -= offset;
-      }
-      offset = (s.css.left + s.width) - (win.scrollLeft() + win.width()) + 5;
-      if(offset > 0) {
-        s.css.left -= Math.abs(offset);
-        s.arrow.left += offset;
-      }
-    } else if(dir == 'left' || dir == 'right') {
-      offset = win.scrollTop() - s.css.top + 5;
-      if(offset > 0) {
-        s.css.top += Math.abs(offset);
-        s.arrow.top -= offset;
-      }
-      offset = (s.css.top + s.height) - (win.scrollTop() + win.height()) + 5;
-      if(offset > 0) {
-        s.css.top -= Math.abs(offset);
-        s.arrow.top += offset;
-      }
-    }
-  }
-
-  function getArrowOffset(s, dir) {
-    if(dir == 'left' || dir == 'right') {
-      s.arrow.top = Math.floor((s.height / 2) - (arrowHeight / 2));
-    } else {
-      s.arrow.left = Math.floor((s.width / 2) - (arrowWidth / 2));
-    }
-    s.arrow[getInverseDirection(dir)] = -arrowHeight;
-  }
-
   function getInverseDirection(dir) {
     switch(dir) {
       case 'top':    return 'bottom';
@@ -121,38 +16,6 @@
     }
   }
 
-  function getCenter(s, horizontal) {
-    if(horizontal) {
-      return s.offset.hCenter + (-s.width / 2);
-    } else {
-      return s.offset.vCenter + (-s.height / 2);
-    }
-  }
-
-  function animateTooltip(s, options, el, fn) {
-    var color = getDefault('color', options, el, 'white');
-    var duration = getDefault('duration', options, el, 150);
-    tooltip.attr('class', color + ' ' + s.direction);
-    tooltip.stop(true, true).css(s.css);
-    arrow.attr('style', '').css(s.arrow);
-    tooltip.animate(s.on, {
-      duration: duration,
-      queue: false,
-      complete: fn
-    });
-    tooltip.fadeIn(duration);
-  }
-
-  function animateTooltipOut(s, options, el, fn) {
-    var duration = getDefault('duration', options, el, 100);
-    tooltip.animate(s.off, {
-      duration: duration,
-      queue: false,
-      complete: fn
-    });
-    tooltip.fadeOut(duration);
-  }
-
   function unescapeHTML(html) {
     if(/&/.test(html)) {
       html = $('<p/>').html(html).text();
@@ -160,26 +23,11 @@
     return html;
   }
 
-  function setContent(el, title) {
-    var html;
-    try {
-      var ref = $(document.body).find(title);
-    } catch(e) {
-      // May throw a malfolmed selector error
-    }
-    if(ref && ref.length > 0) {
-      html = ref.html();
-    } else {
-      html = unescapeHTML(title);
-    }
-    content.html(html);
-  }
-
   function getDefault(name, options, el, defaultValue) {
-    return or(options[name], el.data('tooltip-'+name), defaultValue);
+    return alternate(options[name], el.data('tooltip-'+name), defaultValue);
   }
 
-  function or() {
+  function alternate() {
     for(var i = 0; i < arguments.length; i++) {
       if(arguments[i] !== undefined) {
         return arguments[i];
@@ -190,59 +38,162 @@
   jQuery.fn.tooltip = function(options) {
     options = options || {};
     this.each(function() {
-      var el = $(this);
-      var title = el.attr('title');
-      if(!title) return;
-      var animating = false;
-      var state;
-      var timer;
-      el.unbind('mouseenter').mouseenter(function() {
-        var delay = getDefault('delay', options, el, 300);
+      var el, title, timer, delay, margin;
+      var elementDimensions, tooltipDimensions;
+
+      el = $(this);
+      delay  = getDefault('delay', options, el, 300);
+      margin = getDefault('margin', options, el, 20);
+
+      function getTitle() {
+        title = el.attr('title') || title;
+        el.removeAttr('title');
+      }
+
+      function setContent() {
+        var html;
+        getTitle();
+        try {
+          var source = $(title);
+        } catch(e) {
+          // May throw a malfolmed selector error
+        }
+        if(source && source.length > 0) {
+          html = source.html();
+        } else {
+          html = unescapeHTML(title);
+        }
+        content.html(html);
+      }
+
+      function setElementDimensions() {
+        var d = {};
+        var elementHeight = el.outerHeight();
+        var elementWidth  = el.outerWidth();
+        var offset        = el.offset();
+        d.top     = offset.top;
+        d.left    = offset.left;
+        d.right   = d.left + elementWidth;
+        d.bottom  = d.top  + elementHeight;
+        d.hCenter = d.left + Math.floor(elementWidth / 2);
+        d.vCenter = d.top  + Math.floor(elementHeight / 2);
+        elementDimensions = d;
+      }
+
+      function setTooltipDimensions() {
+        var d = {};
+        // Reset tooltip to the top left so the dimensions aren't impacted.
+        tooltip.css({ left: 0, top: 0 });
+        d.width  = tooltip.outerWidth(true);
+        d.height = tooltip.outerHeight(true);
+        tooltipDimensions = d;
+      }
+
+      function getTooltipPosition(direction, testBounds) {
+        var pos = {}, protrusion;
+        switch(direction) {
+          case 'top':
+            pos.top    = elementDimensions.top - tooltipDimensions.height - margin;
+            pos.left   = getCenterAlignedOffset(pos, true);
+            protrusion = getProtrusion(pos.top, direction);
+            break;
+          case 'right':
+            pos.top    = getCenterAlignedOffset(pos, false);
+            pos.left   = elementDimensions.right + margin;
+            protrusion = getProtrusion(pos.left, direction);
+            break;
+          case 'bottom':
+            pos.top    = elementDimensions.bottom + margin;
+            pos.left   = getCenterAlignedOffset(pos, true);
+            protrusion = getProtrusion(pos.top, direction);
+            break;
+          case 'left':
+            pos.top    = getCenterAlignedOffset(pos, false);
+            pos.left   = elementDimensions.left - tooltipDimensions.width - margin;
+            protrusion = getProtrusion(pos.top, direction);
+            break;
+        }
+        if(testBounds && protrusion > 0) {
+          pos = getTooltipPosition(getInverseDirection(direction));
+        } else {
+          pos.direction = direction;
+        }
+        return pos;
+      }
+
+      function getProtrusion(px, dir) {
+        switch(dir) {
+          case 'top':
+            px = -px + win.scrollTop();
+            break;
+          case 'right':
+            px = px + tooltipDimensions.width + margin - win.scrollLeft() - win.width();
+            break;
+          case 'bottom':
+            px = px + tooltipDimensions.height - win.scrollTop() - win.height();
+            break;
+          case 'left':
+            px = -px + margin + win.scrollLeft();
+            break;
+        }
+        return Math.max(0, px);
+      }
+
+      function getCenterAlignedOffset(pos, horizontal) {
+        var px, offset = 0;
+        if(horizontal) {
+          px = elementDimensions.hCenter + (-tooltipDimensions.width / 2);
+          offset += getProtrusion(px, 'left');
+          offset -= getProtrusion(px, 'right');
+        } else {
+          px = elementDimensions.vCenter + (-tooltipDimensions.height / 2);
+          offset += getProtrusion(px, 'top');
+          offset -= getProtrusion(px, 'bottom');
+        }
+        pos.offset = offset;
+        return px + offset;
+      }
+
+      function setArrowPosition(pos) {
+        var css = {}, dir = pos.direction;
+        if(dir == 'left' || dir == 'right') {
+          css.top = Math.floor((tooltipDimensions.height / 2) - (arrowHeight / 2));
+          css.top -= pos.offset;
+        } else {
+          css.left = Math.floor((tooltipDimensions.width / 2) - (arrowWidth / 2));
+          css.left -= pos.offset;
+        }
+        css[getInverseDirection(dir)] = 0;
+        arrow.attr('style', '').css(css);
+      }
+
+      el.mouseenter(function() {
         clearTimeout(timer);
         timer = setTimeout(function() {
-          var margin    = getDefault('margin', options, el, 20);
-          var slide     = getDefault('slide', options, el, 10);
-          var direction = getDefault('direction', options, el, 'top');
-          var t         = el.attr('title');
-          if(t) {
-            title = t;
-          }
-          el.removeAttr('title');
-          setContent(el, options.html || title);
-          state = getState(el, options);
-          checkBounds(state, direction, margin, slide);
-          animateTooltip(state, options, el, function() {
-            animating = false;
-          });
-          animating = true;
+          var direction = getDefault('direction', options, el, 'top'), pos;
+          var classes   = getDefault('class', options, el, '');
+          setContent();
+          setElementDimensions();
+          setTooltipDimensions();
+          pos = getTooltipPosition(direction, true);
+          setArrowPosition(pos);
+          tooltip.css(pos).attr('class', classes + ' in ' + pos.direction);
         }, delay);
       });
-      el.unbind('mouseleave').mouseleave(function() {
+      el.mouseleave(function() {
         clearTimeout(timer);
-        if(!state) return;
-        if(animating) {
-          tooltip.fadeOut(100, function() {
-            animating = false;
-          });
-        } else {
-          animateTooltipOut(state, options, el, function() {
-            animating = false;
-          });
-        }
-        state = null;
-        animating = true;
+        tooltip.removeClass('in');
       });
     });
   };
 
   $(document).ready(function() {
-    tooltip = $('<div id="tooltip" />').appendTo(document.body).css('position', 'absolute').hide();
+    tooltip = $('<div id="tooltip" />').appendTo(document.body);
     arrow   = $('<div class="arrow" />').appendTo(tooltip);
     content = $('<div class="content" />').appendTo(tooltip);
     win     = $(window);
-    arrowWidth = arrow.width();
+    arrowWidth  = arrow.width();
     arrowHeight = arrow.height();
-    $('[title]').tooltip();
   });
 
 })(jQuery);

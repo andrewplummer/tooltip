@@ -7,55 +7,88 @@
   display: none;
   position: absolute;
   z-index: 100;
+  background-color: #fff;
+  color: #333;
 }
 
-#tooltip.black {
-  background: rgba(0,0,0,0.95);
-  color: #fff;
+#tooltip.in {
+  display: block;
+  animation: pop 150ms ease-in-out;
+  -webkit-animation: pop 150ms ease-in-out;
 }
 
-#tooltip.white {
-  background: rgba(255,255,255,0.95);
-  color: #222;
-}
 
 #tooltip .arrow {
   width: 11px;
   height: 11px;
   position: absolute;
-  background-image: url('../images/tooltip.png');
-  background-repeat: no-repeat;
 }
 
-#tooltip.black.top .arrow {
-  background-position: -6px -17px;
+#tooltip .arrow:before {
+  position: relative;
+  color: #fff;
+  font-size: 14px;
 }
 
-#tooltip.black.right .arrow {
-  background-position: 5px -6px;
+#tooltip.top .arrow:before {
+  content: '▼';
+  top: 7px;
+  left: -5px;
 }
 
-#tooltip.black.bottom .arrow {
-  background-position: -6px 5px;
+#tooltip.right .arrow:before {
+  content: '◀';
+  left: -7px;
+  top: -3px;
 }
 
-#tooltip.black.left .arrow {
-  background-position: -17px -6px;
+#tooltip.bottom .arrow:before {
+  content: '▲';
+  top: -12px;
+  left: -5px;
 }
 
-#tooltip.white.top .arrow {
-  background-position: -39px -17px;
+#tooltip.left .arrow:before {
+  content: '▶';
+  top: -2px;
+  left: 7px;
 }
 
-#tooltip.white.right .arrow {
-  background-position: -28px -6px;
+@keyframes pop
+{
+  0%
+  {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  50%
+  {
+    opacity: 0.5;
+    transform: scale(1.1);
+  }
+  100%
+  {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-#tooltip.white.bottom .arrow {
-  background-position: -39px 5px;
-}
-
-#tooltip.white.left .arrow {
-  background-position: -50px -6px;
+@-webkit-keyframes pop
+{
+  0%
+  {
+    opacity: 0;
+    -webkit-transform: scale(0.9);
+  }
+  50%
+  {
+    opacity: 0.5;
+    -webkit-transform: scale(1.1);
+  }
+  100%
+  {
+    opacity: 1;
+    -webkit-transform: scale(1);
+  }
 }
 
