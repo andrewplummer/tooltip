@@ -1,8 +1,8 @@
 
 #tooltip {
-  padding: 10px;
+  padding: 10px 20px;
   border-radius: 4px;
-  box-shadow: 0px 1px 5px rgba(0,0,0,0.6);
+  box-shadow: 0px 1px 3px rgba(0,0,0,0.4);
   max-width: 300px;
   display: none;
   position: absolute;
@@ -28,11 +28,12 @@
   position: relative;
   color: #fff;
   font-size: 14px;
+  text-shadow: 0px 2px 2px rgba(0,0,0,0.4);
 }
 
 #tooltip.top .arrow:before {
   content: '▼';
-  top: 7px;
+  top: 5px;
   left: -5px;
 }
 
