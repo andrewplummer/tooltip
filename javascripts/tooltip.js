@@ -1,4 +1,4 @@
-(function($){
+(function($) {
 
   var tooltip;
   var arrow;
@@ -7,7 +7,7 @@
   var content;
   var win;
 
-  function getState(el, options){
+  function getState(el, options) {
     var s = {};
     var elementHeight = el.outerHeight();
     var elementWidth  = el.outerWidth();
@@ -28,11 +28,11 @@
     return s;
   }
 
-  function checkBounds(s, direction, margin, slide){
+  function checkBounds(s, direction, margin, slide) {
     var bound, alternate;
     margin = parseInt(margin);
     slide  = parseInt(slide);
-    switch(direction){
+    switch(direction) {
       case 'top':
         bound = win.scrollTop();
         if(s.offset.top - s.height - margin - slide < bound) alternate = 'bottom';
@@ -66,7 +66,7 @@
         s.css.top = getCenter(s, false);
         break;
     }
-    if(alternate && !s.over){
+    if(alternate && !s.over) {
       s.over = true;
       checkBounds(s, alternate, margin, slide);
     } else {
@@ -76,35 +76,35 @@
     }
   }
 
-  function checkSlide(s, dir){
+  function checkSlide(s, dir) {
     var offset;
     if(dir == 'top' || dir == 'bottom') {
       offset = win.scrollLeft() - s.css.left + 5;
-      if(offset > 0){
+      if(offset > 0) {
         s.css.left += Math.abs(offset);
         s.arrow.left -= offset;
       }
       offset = (s.css.left + s.width) - (win.scrollLeft() + win.width()) + 5;
-      if(offset > 0){
+      if(offset > 0) {
         s.css.left -= Math.abs(offset);
         s.arrow.left += offset;
       }
     } else if(dir == 'left' || dir == 'right') {
       offset = win.scrollTop() - s.css.top + 5;
-      if(offset > 0){
+      if(offset > 0) {
         s.css.top += Math.abs(offset);
         s.arrow.top -= offset;
       }
       offset = (s.css.top + s.height) - (win.scrollTop() + win.height()) + 5;
-      if(offset > 0){
+      if(offset > 0) {
         s.css.top -= Math.abs(offset);
         s.arrow.top += offset;
       }
     }
   }
 
-  function getArrowOffset(s, dir){
-    if(dir == 'left' || dir == 'right'){
+  function getArrowOffset(s, dir) {
+    if(dir == 'left' || dir == 'right') {
       s.arrow.top = Math.floor((s.height / 2) - (arrowHeight / 2));
     } else {
       s.arrow.left = Math.floor((s.width / 2) - (arrowWidth / 2));
@@ -112,8 +112,8 @@
     s.arrow[getInverseDirection(dir)] = -arrowHeight;
   }
 
-  function getInverseDirection(dir){
-    switch(dir){
+  function getInverseDirection(dir) {
+    switch(dir) {
       case 'top':    return 'bottom';
       case 'bottom': return 'top';
       case 'left':   return 'right';
@@ -121,15 +121,15 @@
     }
   }
 
-  function getCenter(s, horizontal){
-    if(horizontal){
+  function getCenter(s, horizontal) {
+    if(horizontal) {
       return s.offset.hCenter + (-s.width / 2);
     } else {
       return s.offset.vCenter + (-s.height / 2);
     }
   }
 
-  function animateTooltip(s, options, el, fn){
+  function animateTooltip(s, options, el, fn) {
     var color = getDefault('color', options, el, 'white');
     var duration = getDefault('duration', options, el, 150);
     tooltip.attr('class', color + ' ' + s.direction);
@@ -143,7 +143,7 @@
     tooltip.fadeIn(duration);
   }
 
-  function animateTooltipOut(s, options, el, fn){
+  function animateTooltipOut(s, options, el, fn) {
     var duration = getDefault('duration', options, el, 100);
     tooltip.animate(s.off, {
       duration: duration,
@@ -164,7 +164,7 @@
     var html;
     try {
       var ref = $(document.body).find(title);
-    } catch(e){
+    } catch(e) {
       // May throw a malfolmed selector error
     }
     if(ref && ref.length > 0) {
@@ -187,16 +187,16 @@
     }
   }
 
-  jQuery.fn.tooltip = function(options){
+  jQuery.fn.tooltip = function(options) {
     options = options || {};
-    this.each(function(){
+    this.each(function() {
       var el = $(this);
       var title = el.attr('title');
       if(!title) return;
       var animating = false;
       var state;
       var timer;
-      el.unbind('mouseenter').mouseenter(function(){
+      el.unbind('mouseenter').mouseenter(function() {
         var delay = getDefault('delay', options, el, 300);
         clearTimeout(timer);
         timer = setTimeout(function() {
@@ -211,16 +211,16 @@
           setContent(el, options.html || title);
           state = getState(el, options);
           checkBounds(state, direction, margin, slide);
-          animateTooltip(state, options, el, function(){
+          animateTooltip(state, options, el, function() {
             animating = false;
           });
           animating = true;
         }, delay);
       });
-      el.unbind('mouseleave').mouseleave(function(){
+      el.unbind('mouseleave').mouseleave(function() {
         clearTimeout(timer);
         if(!state) return;
-        if(animating){
+        if(animating) {
           tooltip.fadeOut(100, function() {
             animating = false;
           });
@@ -235,7 +235,7 @@
     });
   };
 
-  $(document).ready(function(){
+  $(document).ready(function() {
     tooltip = $('<div id="tooltip" />').appendTo(document.body).css('position', 'absolute').hide();
     arrow   = $('<div class="arrow" />').appendTo(tooltip);
     content = $('<div class="content" />').appendTo(tooltip);
